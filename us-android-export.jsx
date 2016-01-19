@@ -61,6 +61,7 @@ function isDocumentNew(doc){
 };
 
 function renameLayer() {
+	docRef.activeLayer = docRef.layers[0];
 	activeLayer.name = prompt('Specify the name for the drawable', 'Drawable name');
 }
 
