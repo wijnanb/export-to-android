@@ -9,13 +9,15 @@
  */
 
 
+
+var saveLocation = "/Users/bert/Projects/Epicgram/Design/icons/";
+
 // Photoshop variables
 var docRef = app.activeDocument,
 	activeLayer = docRef.activeLayer,
 	activeLayer2,
 	newWidth, 
-	newHeight,
-	docName = docRef.name;
+	newHeight;
 
 
 // Run main function
@@ -23,18 +25,17 @@ init();
 
 // The other functions
 function init() {
-	if(!isDocumentNew()) {
-		saveFunc('xxxhdpi');
-		saveFunc('xxhdpi');
-		saveFunc('xhdpi');
-		saveFunc('hdpi');
-		saveFunc('mdpi');
-		saveFunc('ldpi');
-	} else {
-		alert("Please save your document before running this script.");
-	}
 	renameLayer();
 
+	saveFunc('xxxhdpi');
+	saveFunc('xxhdpi');
+	saveFunc('xhdpi');
+	saveFunc('hdpi');
+	saveFunc('mdpi');
+	saveFunc('ldpi');
+
+	// Close the document without saving
+	activeDocument.close(SaveOptions.DONOTSAVECHANGES);
 }
 
 // Test if the document is new (unsaved)
@@ -146,8 +147,7 @@ function saveFunc(dpi) {
 
 	var Name = docRef2.name.replace(/\.[^\.]+$/, ''), 
 		Ext = decodeURI(docRef2.name).replace(/^.*\./,''), 
-		Path = docRef.path,
-		folder = Folder(Path + '/' + docName + '-assets/' + 'drawable-' + dpi);
+		folder = Folder(saveLocation + 'mipmap-' + dpi);
 		
 	if(!folder.exists) {
 		folder.create();
