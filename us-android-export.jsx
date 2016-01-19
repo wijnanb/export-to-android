@@ -33,6 +33,7 @@ function init() {
 	} else {
 		alert("Please save your document before running this script.");
 	}
+	renameLayer();
 
 }
 
@@ -57,6 +58,10 @@ function isDocumentNew(doc){
 	}
 	return rc;
 };
+
+function renameLayer() {
+	activeLayer.name = prompt('Specify the name for the drawable', 'Drawable name');
+}
 
 
 function resizeDoc(document, scale) {
