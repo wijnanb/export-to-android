@@ -27,6 +27,7 @@ init();
 function init() {
 	renameLayer();
 
+	saveFunc('xxxhdpi');
 	saveFunc('xxhdpi');
 	saveFunc('xhdpi');
 	saveFunc('hdpi');
@@ -34,7 +35,7 @@ function init() {
 	saveFunc('ldpi');
 
 	// Close the document without saving
-	//activeDocument.close(SaveOptions.DONOTSAVECHANGES);
+	activeDocument.close(SaveOptions.DONOTSAVECHANGES);
 }
 
 // Test if the document is new (unsaved)
@@ -64,13 +65,6 @@ function renameLayer() {
 	activeLayer.name = prompt('Specify the name for the drawable', 'Drawable name');
 }
 
-function rasterizeLayer() {
-	// Rasterize all layers.
-	try {
-		executeAction(stringIDToTypeID( "rasterizeAll" ), undefined, DialogModes.NO);
-	} catch (ignored) {}
-}
-
 
 function resizeDoc(document, scale) {
 
@@ -78,21 +72,24 @@ function resizeDoc(document, scale) {
 	calcHeight = activeLayer.bounds[3] - activeLayer.bounds[1]; // Get layer's height
 	// newWidth, newHeight; 
 
-	if(scale === 'xxhdpi') {
-		newHeight = Math.floor(calcHeight);
-		newWidth = Math.floor(calcWidth);
+	if(scale === 'xxxhdpi') {
+		newHeight = calcHeight;
+		newWidth = calcWidth;
+	} else if(scale === 'xxhdpi') {
+		newHeight = Math.floor(calcHeight / 16 * 12);
+		newWidth = Math.floor(calcWidth / 16 * 12);
     } else if(scale === 'xhdpi') {
-		newHeight = Math.floor(calcHeight / 3 * 2);
-		newWidth = Math.floor(calcWidth / 3 * 2);
+		newHeight = Math.floor(calcHeight / 16 * 8);
+		newWidth = Math.floor(calcWidth / 16 * 8);
 	} else if(scale === 'hdpi') {
-		newHeight = Math.floor(calcHeight / 2);
-		newWidth = Math.floor(calcWidth / 2);
+		newHeight = Math.floor(calcHeight / 16 * 6);
+		newWidth = Math.floor(calcWidth / 16 * 6);
 	} else if(scale === 'mdpi') {
-		newHeight = Math.floor(calcHeight / 3);
-		newWidth = Math.floor(calcWidth / 3);
+		newHeight = Math.floor(calcHeight / 16 * 4);
+		newWidth = Math.floor(calcWidth / 16 * 4);
 	} else if(scale === 'ldpi') {
-		newHeight = Math.floor(calcHeight / 3 * 0.75);
-		newWidth = Math.floor(calcWidth / 3 * 0.75);
+		newHeight = Math.floor(calcHeight / 16 * 3);
+		newWidth = Math.floor(calcWidth / 16 * 3);
 	}
 
 	// Resize temp document using Bicubic interpolation
