@@ -8,9 +8,12 @@
  * Licensed under the MIT license
  */
 
+// Changed by Bert Wijnants to prompt for name
 
 
-var saveLocation = "/Users/bert/Projects/Epicgram/Design/icons/";
+// var saveLocation = "/Users/bert/Projects/Epicgram/app/src/main/res/"; // !!! must have trailing slash !!!!
+// var saveLocation = "/Users/bert/Projects/1Limburg/1limburg-android-app/1Limburg/app/src/main/res/"; // !!! must have trailing slash !!!!
+var saveLocation = "/Users/bert/Projects/Livingstown-Tour-Android/app/src/main/res/"; // !!! must have trailing slash !!!!
 
 // Photoshop variables
 var docRef = app.activeDocument,
@@ -25,13 +28,21 @@ init();
 
 // The other functions
 function init() {
+	// set unit to pixels
+	app.preferences.rulerUnits = Units.PIXELS;
+
 	renameLayer();
 
-	saveFunc('xxhdpi');
-	saveFunc('xhdpi');
-	saveFunc('hdpi');
-	saveFunc('mdpi');
-	saveFunc('ldpi');
+
+	var imageIs3x = true;
+
+
+	if (imageIs3x) { saveFunc('xxxhdpi', imageIs3x); }
+	saveFunc('xxhdpi', imageIs3x);
+	saveFunc('xhdpi', imageIs3x);
+	saveFunc('hdpi', imageIs3x);
+	saveFunc('mdpi', imageIs3x);
+	saveFunc('ldpi', imageIs3x);
 
 	// Close the document without saving
 	//activeDocument.close(SaveOptions.DONOTSAVECHANGES);
@@ -61,7 +72,7 @@ function isDocumentNew(doc){
 
 function renameLayer() {
 	docRef.activeLayer = docRef.layers[0];
-	activeLayer.name = prompt('Specify the name for the drawable', 'Drawable name');
+	activeLayer.name = prompt('Specify the name for the drawable.\nThe file will be saved in ' + saveLocation + '\n\nYou can edit this script in /Users/bert/Projects/export-to-android', docRef.activeLayer.name);
 }
 
 function rasterizeLayer() {
@@ -93,6 +104,40 @@ function resizeDoc(document, scale) {
 	} else if(scale === 'ldpi') {
 		newHeight = Math.floor(calcHeight / 3 * 0.75);
 		newWidth = Math.floor(calcWidth / 3 * 0.75);
+	}
+
+	// Resize temp document using Bicubic interpolation
+	resizeLayer(newWidth);
+
+	// Merge all layers inside the temp document
+	activeLayer2.merge();
+}
+
+
+function resizeDoc3x(document, scale) {
+
+	var calcWidth  = activeLayer.bounds[2] - activeLayer.bounds[0], // Get layer's width
+	calcHeight = activeLayer.bounds[3] - activeLayer.bounds[1]; // Get layer's height
+	// newWidth, newHeight; 
+
+	if(scale === 'xxxhdpi') {
+		newHeight = calcHeight;
+		newWidth = calcWidth;
+	} else if(scale === 'xxhdpi') {
+		newHeight = Math.floor(calcHeight / 16 * 12);
+		newWidth = Math.floor(calcWidth / 16 * 12);
+    } else if(scale === 'xhdpi') {
+		newHeight = Math.floor(calcHeight / 16 * 8);
+		newWidth = Math.floor(calcWidth / 16 * 8);
+	} else if(scale === 'hdpi') {
+		newHeight = Math.floor(calcHeight / 16 * 6);
+		newWidth = Math.floor(calcWidth / 16 * 6);
+	} else if(scale === 'mdpi') {
+		newHeight = Math.floor(calcHeight / 16 * 4);
+		newWidth = Math.floor(calcWidth / 16 * 4);
+	} else if(scale === 'ldpi') {
+		newHeight = Math.floor(calcHeight / 16 * 3);
+		newWidth = Math.floor(calcWidth / 16 * 3);
 	}
 
 	// Resize temp document using Bicubic interpolation
@@ -144,10 +189,15 @@ function dupToNewFile() {
 	activeLayer2.translate(-activeLayer2.bounds[0],-activeLayer2.bounds[1]);
 }
 
-function saveFunc(dpi) {
+function saveFunc(dpi, imageIs3x) {
 	dupToNewFile();
 	var docRef2 = app.activeDocument;
-	resizeDoc(docRef2, dpi);
+
+	if (imageIs3x) {
+		resizeDoc3x(docRef2, dpi);
+	} else {
+		resizeDoc(docRef2, dpi);
+	}
 
 	var Name = docRef2.name.replace(/\.[^\.]+$/, ''), 
 		Ext = decodeURI(docRef2.name).replace(/^.*\./,''), 
